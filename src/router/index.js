@@ -68,7 +68,7 @@ const router = new VueRouter({
 
 let userna = sessionStorage.getItem("userName")??"";
 router.beforeEach((to,form,next) =>{
-  if(to.name != '登录' && userna.length == 0)
+  if(to.name != '登录' && form.name != '登录')
   {
     next({name:'登录'});
   }else{

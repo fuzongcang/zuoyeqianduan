@@ -20,7 +20,7 @@
           @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button
           size="mini"
-          @click="Distribution(scope.$index, scope.row)">分配权限</el-button>
+          @click="Distribution(scope.row.roleId)">分配权限</el-button>
         <el-button
           size="mini"
           type="danger"
@@ -29,25 +29,29 @@
     </el-table-column>
   </el-table>
   <el-dialog title="菜单" :visible.sync="dialogTableVisible">
-    <treepros @treetable="treetable" />
+    <menuTree ref="dialogTree" />
     <div slot="footer" class="dialog-footer">
     <el-button @click="dialogTableVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogTableVisible = false">确 定</el-button>
+    <el-button type="primary" @click="SavePermission">确 定</el-button>
   </div>
   </el-dialog>
   </div>
 </template>
 
 <script>
-import treepros from '@/views/Role/tree.vue'
+import menuTree from '@/views/Role/tree.vue'
   export default {
     components: {
-    treepros,
+    menuTree,
     },
     data() {
       return {
         tableData: [],
-        dialogTableVisible:false
+        dialogTableVisible:false,
+        MenuRole:{
+          roleId:0,
+          menuId:[]
+        }
       }
     },
     methods: {
@@ -57,13 +61,29 @@ import treepros from '@/views/Role/tree.vue'
       handleDelete(index, row) {
         console.log(index, row);
       },
-      Distribution(index,row){
+      Distribution(roleId){
+        this.MenuRole.roleId = roleId;
         this.dialogTableVisible = true;
       },
       GetShow(){
         this.$axios.get('https://localhost:44340/api/Role/Show')
         .then(res =>{
+          
             this.tableData = res.data;
+            debugger
+        })
+      },
+      SavePermission(){
+        this.MenuRole.menuId= this.$refs["dialogTree"].$refs["menuTree"].getCheckedNodes(true,true).map(m=>m.value);
+        this.$axios.post('https://localhost:44340/api/Role/SavePermission',this.MenuRole)
+        .then(res =>{
+             this.$message({
+                message: '分配成功',
+                type: 'success',
+                onClose:(m=>{
+                  this.GetShow();
+                })
+              });
         })
       }
     },
