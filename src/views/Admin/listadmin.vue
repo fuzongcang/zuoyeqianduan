@@ -1,16 +1,12 @@
 <template>
 <div>
+  <el-button type="primary" @click="dialogTableVisible=true">添加</el-button>
   <el-table
     :data="tableData"
     style="width: 100%">
     <el-table-column
       prop="userName"
       label="账号"
-      width="180">
-    </el-table-column>
-     <el-table-column
-      prop="password"
-      label="密码"
       width="180">
     </el-table-column>
      <el-table-column
@@ -47,11 +43,18 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="page.total">
     </el-pagination>
+    <el-dialog title="新增账号" :visible.sync="dialogTableVisible">
+      <addpro :key="new Date().getTime()" />
+    </el-dialog>
 </div>
 </template>
 
 <script>
+import addpro from '@/views/Admin/adminadd.vue'
   export default {
+    components: {
+    addpro
+  },
     data() {
       return {
         tableData: [],
@@ -59,7 +62,8 @@
             pindex:1,
             psize:2,
             total:0
-        }
+        },
+        dialogTableVisible:false
       }
     },
     methods: {
@@ -67,7 +71,25 @@
         console.log(index, row);
       },
       handleDelete(index, row) {
-        console.log(index, row);
+         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$axios.post('https://localhost:44340/api/Admins/Shan?id='+row.adminId)
+          .then(res =>{
+            if(res.data > 0)
+            {
+              this.$message.success('删除成功');
+              this.GetShow();
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
       },
       handleSizeChange(val){
         this.page.psize = val;

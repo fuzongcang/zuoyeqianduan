@@ -10,7 +10,7 @@
   :default-checked-keys="[5]"
   :props="defaultProps">
 </el-tree>
-<el-button @click="getdata">查看信息</el-button>
+
 </div>
 </template>
 <script>

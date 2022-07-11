@@ -2,7 +2,7 @@
 <el-container style="height: 500px; border: 1px solid #eee">
   <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
     <el-menu :default-openeds="['1', '3']" :unique-opened="true" :router="true">
-      <el-submenu index="1" v-for="(item,index) in rootMenu" :key="menu.menuId">
+      <el-submenu index="1" v-for="(item,index) in rootMenu" :key="item.menuId">
         <template slot="title">
          <i class="el-icon-menu"></i>
            <span>{{item.menuName}}</span>

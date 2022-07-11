@@ -1,5 +1,6 @@
 <template>
 <div>
+  <el-button type="primary" @click="dialogFormVisible = true">添加</el-button>
   <el-table
     :data="tableData"
     style="width: 100%">
@@ -31,23 +32,30 @@
   <el-dialog title="菜单" :visible.sync="dialogTableVisible">
     <menuTree ref="dialogTree" />
     <div slot="footer" class="dialog-footer">
-    <el-button @click="dialogTableVisible = false">取 消</el-button>
+    <el-button @click="dialogTableVisible = false">关 闭</el-button>
     <el-button type="primary" @click="SavePermission">确 定</el-button>
   </div>
   </el-dialog>
+
+  <el-dialog title="角色新增" :visible.sync="dialogFormVisible">
+    <RoleAddPro @addTable="addTable" />
+</el-dialog>
   </div>
 </template>
 
 <script>
 import menuTree from '@/views/Role/tree.vue'
+import RoleAddPro from '@/views/Role/roleadd.vue'
   export default {
     components: {
     menuTree,
+    RoleAddPro
     },
     data() {
       return {
         tableData: [],
         dialogTableVisible:false,
+        dialogFormVisible:false,
         MenuRole:{
           roleId:0,
           menuId:[]
@@ -59,7 +67,25 @@ import menuTree from '@/views/Role/tree.vue'
         console.log(index, row);
       },
       handleDelete(index, row) {
-        console.log(index, row);
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$axios.delete('https://localhost:44340/api/Role/Del?id='+row.roleId)
+          .then(res =>{
+            if(res.data > 0)
+            {
+              this.$message.success('删除成功');
+              this.GetShow();
+            }
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
       },
       Distribution(roleId){
         this.MenuRole.roleId = roleId;

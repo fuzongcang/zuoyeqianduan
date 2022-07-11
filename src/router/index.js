@@ -53,6 +53,16 @@ const routes = [
     component: () => import('../views/Role/tree.vue')
   },
   {
+    path: '/adminadd',
+    name: 'i',
+    component: () => import('../views/Admin/adminadd.vue')
+  },
+  {
+    path: '/roleadd',
+    name: 'i',
+    component: () => import('../views/Role/roleadd.vue')
+  },
+  {
     path: '/about',
     name: 'about',
     // route level code-splitting
@@ -66,15 +76,16 @@ const router = new VueRouter({
   routes
 })
 
-let userna = sessionStorage.getItem("userName")??"";
-router.beforeEach((to,form,next) =>{
-  if(to.name != '登录' && form.name != '登录')
-  {
-    next({name:'登录'});
+ 
+ router.beforeEach((to,form,next) =>{
+  let userna = sessionStorage.getItem("userName")??"";
+   if(to.name != '登录' && userna.length == 0)
+   {
+     next({name:'登录'});
   }else{
     next()
-  }
-})
+   }
+ })
 
 
 export default router
